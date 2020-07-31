@@ -5,11 +5,11 @@ import entities.Book;
 import org.apache.http.HttpStatus;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
-@Path("/books")
+@Path("books")
 public class BookService implements ApiBase<Book>  {
     @Inject
     BookDao bookDao;
@@ -24,10 +24,25 @@ public class BookService implements ApiBase<Book>  {
 
     @Override
     public Response get(Long id) {
-        return Response
-                .status(HttpStatus.SC_OK)
-                .entity(bookDao.get(id))
-                .build();
+        Book b = bookDao.get(id);
+
+        if(b == null) {
+            return Response
+                    .status(HttpStatus.SC_NOT_FOUND)
+                    .build();
+        }
+
+        try {
+            return Response
+                    .status(HttpStatus.SC_OK)
+                    .entity(b)
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response
+                    .status(HttpStatus.SC_METHOD_FAILURE)
+                    .build();
+        }
     }
 
     @Override

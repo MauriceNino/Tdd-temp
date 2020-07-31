@@ -1,48 +1,34 @@
 package rest;
 
-import daos.BookDao;
-import entities.Book;
-import helpers.BaseJerseyTest;
+import helpers.ApplicationBinder;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
+import org.glassfish.jersey.test.JerseyTest;
+import org.junit.Test;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
-class BookServiceTest extends BaseJerseyTest {
-    @InjectMocks
-    BookDao bookDao;
-
+public class BookServiceTest extends JerseyTest {
     @Override
     protected Application configure() {
-        return new ResourceConfig(BookService.class);
+        ResourceConfig resource = new ResourceConfig(BookService.class);
+        resource.register(new ApplicationBinder());
+        resource.register(JacksonFeature.class);
+        return resource;
     }
 
     @Test
-    void get() {
+    public void get() {
         Response response = target("books/1").request().get();
 
+        String books = response.readEntity(String.class);
         try {
             assertEquals(200, response.getStatus());
-            Book book = response.readEntity(Book.class);
-            assertEquals(book.getId(), Long.valueOf(1L));
         } finally {
             response.close();
         }
-    }
-
-    @Test
-    void create() {
-    }
-
-    @Test
-    void update() {
-    }
-
-    @Test
-    void delete() {
     }
 }

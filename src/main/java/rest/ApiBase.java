@@ -9,7 +9,6 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public interface ApiBase<T> {
 
-    @Path("/all")
     @GET
     Response getAll();
 

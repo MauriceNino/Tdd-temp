@@ -1,6 +1,0 @@
-helpers\BaseTest.class
-helpers\DBSetup.class
-helpers\BaseJerseyTest.class
-rest\BookServiceTest.class
-rest\WorldApiTest.class
-daos\BookDaoTest.class
