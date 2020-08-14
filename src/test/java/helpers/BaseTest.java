@@ -10,6 +10,8 @@ import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlProducer;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
 import org.junit.jupiter.api.AfterEach;
@@ -19,6 +21,7 @@ import org.xml.sax.InputSource;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.ws.rs.core.Application;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -26,10 +29,16 @@ import java.rmi.UnexpectedException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 @EnableAutoWeld
 @AddPackages(EmProducer.class)
-public class BaseTest {
+public class BaseTest extends JerseyTest {
+    @Override
+    protected Application configure() {
+        return new ResourceConfig(Void.class); // Dummy Resource
+    }
+
     @Inject
     protected EntityManager em;
 
@@ -68,14 +77,16 @@ public class BaseTest {
             insertData(methodAnnotation == null ? classAnnotation : methodAnnotation);
             em.getTransaction().begin();
         }
+        super.setUp();
     }
 
     @AfterEach
-    public void commit() {
+    public void commit() throws Exception {
         if (em.getTransaction().isActive()) {
             em.getTransaction().commit();
             em.clear();
         }
+        super.tearDown();
     }
 
     private static void cleanDatabase() throws DatabaseUnitException, SQLException {
@@ -107,6 +118,7 @@ public class BaseTest {
         if (dataFile == null) {
             throw new DatabaseUnitException(annotation.value() + " not found");
         }
+
         String path = dataFile.getPath();
         IDataSet dataSet = getDataSet(path);
         DatabaseOperation.INSERT.execute(con, dataSet);

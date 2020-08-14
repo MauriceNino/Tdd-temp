@@ -15,15 +15,15 @@ public class SimpleJerseyTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        return new ResourceConfig(BookService.class);
+        return new ResourceConfig(TestService.class);
     }
 
     @Test
     public void test() {
-        Response response = target("books").request().get();
+        Response response = target("test").request().get();
 
         assertEquals("Http Response should be 200: ", Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("Http Content-Type should be: ", MediaType.TEXT_HTML, response.getHeaderString(HttpHeaders.CONTENT_TYPE));
+        assertEquals("Http Content-Type should be: ", MediaType.APPLICATION_JSON, response.getHeaderString(HttpHeaders.CONTENT_TYPE));
 
         String content = response.readEntity(String.class);
         System.out.println("Gotten response: " + content);
