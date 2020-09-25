@@ -36,17 +36,10 @@ public class BookService implements ApiBase<Book>  {
                     .build();
         }
 
-        try {
-            return Response
-                    .status(HttpStatus.SC_OK)
-                    .entity(b)
-                    .build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Response
-                    .status(HttpStatus.SC_METHOD_FAILURE)
-                    .build();
-        }
+        return Response
+                .status(HttpStatus.SC_OK)
+                .entity(b)
+                .build();
     }
 
     @Override
